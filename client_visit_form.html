@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Visit Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            max-width: 200px;
+            display: block;
+            margin: 0 auto;
+            padding-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        select {
+            width: calc(100% - 12px);
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        select#country_code_1,
+        select#country_code_2,
+        select#country_code_3,
+        select#country_code_4,
+        select#country_code_5,
+        select#country_code_6,
+        select#country_code_7,
+        select#country_code_8 {
+            width: calc(30% - 5px);
+            margin-right: 10px;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .checkbox-container input[type="checkbox"],
+        .checkbox-container label {
+            display: inline-block;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img class="logo" src="https://www.outworx.co.za/wp-content/uploads/2022/08/Outworx_Logo_Main.png" alt="Outworx Logo">
+        <h1>Client Visit Information Form</h1>
+        <form id="registrationForm">
+            action="https://prod-141.westeurope.logic.azure.com:443/workflows/1534eade5907460891ff38e8e1ac700a/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=1p36jmqLGGvrNGqZiG2zn8hqx-wdE5KA3cCo35a3i0k" method="POST">
+            <div class="form-group">
+                <label for="outworx_contact">Outworx Point of Contact</label>
+                <span class="subtitle">The person's name from Outworx that you are in regular contact with</span>
+                <input type="text" id="outworx_contact" name="Outworx Point of Contact">
+            </div>
+
+            <div class="form-group">
+                <label for="campaign">Campaign:</label>
+                <span class="subtitle">Name of the business</span>
+                <input type="text" id="campaign" name="Campaign">
+            </div>
+
+            <div class="form-group">
+                <label for="num_guests">Number of Guests:</label>
+                <span class="subtitle">Number of guests attending</span>
+                <select id="num_guests" name="Number of Guests">
+                    <option value="">Select</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+            </div>
+
+            <div id="guestFieldsContainer"></div>
+
+            <button type="submit" id="submitButton">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("registrationForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            var formData = {
+                "Outworx Point of Contact": document.getElementById("outworx_contact").value,
+                "Campaign": document.getElementById("campaign").value,
+                "Number of Guests": document.getElementById("num_guests").value,
+                "Guests": []
+            };
+
+            var numGuests = parseInt(formData["Number of Guests"]);
+            for (var i = 1; i <= numGuests; i++) {
+                var guest = {
+                    "Guest Name": document.getElementById(`guest_name_${i}`).value,
+                    "Guest Email Address": document.getElementById(`guest_email_${i}`).value,
+                    "Country Code": document.getElementById(`country_code_${i}`).value,
+                    "Guest Mobile Number": document.getElementById(`guest_mobile_${i}`).value,
+                    "Does the guest require a South African phone?": document.getElementById(`sa_phone_${i}`).value,
+                    "Arrival Airline": document.getElementById(`arrival_airline_${i}`).value,
+                    "Arrival Flight Number": document.getElementById(`arrival_flight_${i}`).value,
+                    "Date of Flight Arrival": document.getElementById(`arrival_date_${i}`).value,
+                    "Time of Flight Arrival": document.getElementById(`arrival_time_${i}`).value,
+                    "Departure Airline": document.getElementById(`departure_airline_${i}`).value,
+                    "Departure Flight Number": document.getElementById(`departure_flight_${i}`).value,
+                    "Date of Flight Departure": document.getElementById(`departure_date_${i}`).value,
+                    "Time of Flight Departure": document.getElementById(`departure_time_${i}`).value,
+                    "Name of the Hotel": document.getElementById(`hotel_${i}`).value,
+                    "Driver Required?": document.getElementById(`driver_required_${i}`).value,
+                    "Daily Collection Time": document.getElementById(`daily_collection_time_${i}`).value,
+                    "Daily Drop off Time": document.getElementById(`daily_dropoff_time_${i}`).value,
+                    "Special Requirements": document.getElementById(`special_requirements_${i}`).value,
+                    "Activities Interested In": Array.from(document.querySelectorAll(`input[name="Activities Interested In (${i})[]"]:checked)).map((checkbox) => checkbox.value)
+                };
+
+                formData["Guests"].push(guest);
+            }
+
+            var jsonData = JSON.stringify(formData);
+
+            fetch("https://prod-141.westeurope.logic.azure.com:443/workflows/1534eade5907460891ff38e8e1ac700a/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=1p36jmqLGGvrNGqZiG2zn8hqx-wdE5KA3cCo35a3i0k", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: jsonData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Form submitted successfully:", data);
+                // You can handle success response here, like displaying a success message
+            })
+            .catch(error => {
+                console.error("Error submitting form:", error);
+                // You can handle error response here, like displaying an error message
+            });
+        });
+    </script>
+</body>
+</html>
